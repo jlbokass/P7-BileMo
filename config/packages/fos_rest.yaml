@@ -1,5 +1,14 @@
 # Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
-fos_rest: ~
+fos_rest:
+  body_converter: # activation de la deserialisation automatique
+      enabled: true
+  view: # format pour la serialisation
+      formats: { json: true, xml: false, rss: false }
+  serializer:
+      serialize_null: true # consideration des champs null
+  format_listener: # activation de la serialisation automatique
+      rules:
+          - { path: ^/, fallback_format: json, priorities: [ json ] }
 #    param_fetcher_listener:  true
 #    allowed_methods_listener:  true
 #    routing_loader: true
