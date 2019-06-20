@@ -17,7 +17,7 @@ See below for more details.
 
 Coming soon  
 
-## Web server configuration
+## Details
 
 Coming soon. 
 
