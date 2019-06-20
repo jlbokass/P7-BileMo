@@ -2,19 +2,43 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/product", name="product")
+     * @Rest\Get(
+     *     path="/products/{id}",
+     *     name="app_product_show",
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     * @Rest\View(
+     *     statusCode=200
+     * )
      */
-    public function index()
+    public function show(Product $product)
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ProductController.php',
-        ]);
+        return $product;
+    }
+
+    /**
+     * @Rest\Get(
+     *     path="/products",
+     *     name="app_product_list"
+     * )
+     *
+     * @Rest\View(
+     *     statusCode=200
+     * )
+     *
+     * @Rest\QueryParam(name="order")
+     */
+    public function list($order)
+    {
+        dd($order);
     }
 }
