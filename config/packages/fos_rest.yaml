@@ -9,7 +9,7 @@ fos_rest:
       serialize_null: true # consideration des champs null
   format_listener: # activation de la serialisation automatique
       rules:
-          - { path: ^/, fallback_format: json, priorities: [ json ] }
+          - { path: ^/api, fallback_format: json, priorities: [ json ] }
   param_fetcher_listener:  force
 #    param_fetcher_listener:  true
 #    allowed_methods_listener:  true
