@@ -12,27 +12,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     /**
-     * @Rest\Get(
-     *     path="/products/{id}",
-     *     name="app_product_show",
-     *     requirements={"id"="\d+"}
-     * )
-     *
-     * @Rest\View(
-     *     statusCode=200
-     * )
-     */
-    public function show(Product $product)
-    {
-        return $product;
-    }
-
-    /**
      * @param ParamFetcherInterface $paramFetcher
      *
-     * @return
+     * @return Products
      *
-     * @Rest\Get("/products", name="app_product_list")
+     * @Rest\Get("/api/products", name="app_product_list")
      * @Rest\QueryParam(
      *     name="keyword",
      *     requirements="[a-zA-Z0-9]",
@@ -62,7 +46,7 @@ class ProductController extends AbstractController
      *     statusCode=200
      * )
      */
-    public function list(ParamFetcherInterface $paramFetcher)
+    public function list(ParamFetcherInterface $paramFetcher): Products
     {
         $pager = $this->getDoctrine()->getRepository(Product::class)->search(
             $paramFetcher->get('keyword'),
@@ -72,5 +56,21 @@ class ProductController extends AbstractController
         );
 
         return new Products($pager);
+    }
+
+    /**
+     * @Rest\Get(
+     *     path="/api/products/{id}",
+     *     name="app_product_show",
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     * @Rest\View(
+     *     statusCode=200
+     * )
+     */
+    public function show(Product $product)
+    {
+        return $product;
     }
 }
