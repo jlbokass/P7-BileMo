@@ -51,14 +51,14 @@ class ProductRepository extends AbstractRepository
     public function search($term, $order = 'asc', $limit = 10, $offset = 0)
     {
         $qb = $this
-            ->createQueryBuilder('a')
-            ->select('a')
-            ->addOrderBy('a.name', $order)
+            ->createQueryBuilder('p')
+            ->select('p')
+            ->addOrderBy('p.name', $order)
         ;
 
         if ($term) {
             $qb
-                ->where('a.title LIKE ?1')
+                ->where('p.name LIKE ?1')
                 ->setParameter(1, '%'.$term.'%')
             ;
         }
