@@ -7,6 +7,8 @@ fos_rest:
   view: # format pour la serialisation
       formats: { json: true, xml: false, rss: false }
       view_response_listener: true # notre action ne renvoie pas de reponse, FOS le fait
+      mime_types:
+        json: ['application/json', 'application/json;version=1.0', 'application/json;version=2.0']
   serializer:
       serialize_null: true # consideration des champs null
   format_listener: # activation de la serialisation automatique
@@ -17,6 +19,13 @@ fos_rest:
     enabled: true
     codes:
       { App\Exception\ResourceValidationException: 400 }
+  versioning:
+    enabled: true
+    resolvers:
+      media_type:
+        enabled: true
+        regex: '/(v|version)=(?P<version>[0-9\.]+)/'
+
 #    param_fetcher_listener:  true
 #    allowed_methods_listener:  true
 #    routing_loader: true
