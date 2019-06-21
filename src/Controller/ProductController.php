@@ -6,9 +6,11 @@ use App\Entity\Product;
 use App\Representation\Products;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Nelmio\ApiDocBundle\Annotation as Doc;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 class ProductController extends AbstractController
 {
@@ -46,6 +48,25 @@ class ProductController extends AbstractController
      * @Rest\View(
      *     statusCode=200
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns list of all products",
+     *     @SWG\Schema(
+     *     type="array",
+     *     @SWG\Items(ref=@Doc\Model(type=Product::class))
+     * )
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="keyword",
+     *     in="query",
+     *     type="string",
+     *     description="Search for a model with a keyword"
+     * )
+     * @SWG\Tag(name="Clients")
+     * @Security(name="Bearer")
+     *
      */
     public function list(ParamFetcherInterface $paramFetcher): Products
     {
@@ -69,6 +90,28 @@ class ProductController extends AbstractController
      * @Rest\View(
      *     statusCode=200
      * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns product details",
+     *     @SWG\Schema(
+     *     type="array",
+     *     @SWG\Items(ref=@Doc\Model(type=Product::class))
+     * )
+     * )
+     *
+     * @SWG\Response(
+     *     response=404,
+     *     description="return when resource is not found"
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="query",
+     *     type="integer",
+     *     description="id of the product"
+     * )
+     * @SWG\Tag(name="Clients")
+     * @Security(name="Bearer")
      */
     public function show(Product $product)
     {

@@ -1,6 +1,10 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
-NelmioApiDocBundle:
-    resource: "@NelmioApiDocBundle/Resources/config/routing/swaggerui.xml"
-    prefix: /api/doc
+#NelmioApiDocBundle:
+#    resource: "@NelmioApiDocBundle/Resources/config/routing/swaggerui.xml"
+#    prefix: /api/doc
+app.swagger_ui:
+      path: /api/doc
+      methods: GET
+      defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
