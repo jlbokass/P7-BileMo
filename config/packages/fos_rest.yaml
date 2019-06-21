@@ -1,0 +1,26 @@
+# Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
+fos_rest:
+  body_converter: # activation de la deserialisation automatique
+      enabled: true
+  view: # format pour la serialisation
+      formats: { json: true, xml: false, rss: false }
+      view_response_listener: true # notre action ne renvoie pas de reponse, FOS le fait
+  serializer:
+      serialize_null: true # consideration des champs null
+  format_listener: # activation de la serialisation automatique
+      rules:
+          - { path: ^/, fallback_format: json, priorities: [ json ] }
+  param_fetcher_listener:  force
+#    param_fetcher_listener:  true
+#    allowed_methods_listener:  true
+#    routing_loader: true
+#    view:
+#        view_response_listener:  true
+#    exception:
+#        codes:
+#            App\Exception\MyException: 403
+#        messages:
+#            App\Exception\MyException: Forbidden area.
+#    format_listener:
+#        rules:
+#            - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json, html ] }
