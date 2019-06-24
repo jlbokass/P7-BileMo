@@ -21,6 +21,7 @@
         "symfony/twig-bundle": "4.3.*",
         "symfony/validator": "4.3.*",
         "symfony/var-dumper": "4.3.*",
+        "symfony/web-server-bundle": "4.3.*",
         "symfony/yaml": "4.3.*",
         "white-october/pagerfanta-bundle": "^1.2",
         "willdurand/hateoas-bundle": "^1.4"
