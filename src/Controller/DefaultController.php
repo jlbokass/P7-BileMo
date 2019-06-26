@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class DefaultController extends AbstractController
 {
     /**
-     * @Route("/register")
+     * @Route("/register", methods={"POST"})
      *
      * @param Request $request
      * @param UserPasswordEncoderInterface $encoder
@@ -29,6 +29,7 @@ class DefaultController extends AbstractController
         $em->flush();
         return new Response(sprintf('User %s successfully created', $user->getUsername()));
     }
+
     public function api()
     {
         return new Response(sprintf('Logged in as %s', $this->getUser()->getUsername()));
