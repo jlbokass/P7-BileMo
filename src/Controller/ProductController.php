@@ -8,6 +8,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Nelmio\ApiDocBundle\Annotation as Doc;
@@ -69,7 +70,7 @@ class ProductController extends AbstractController
      * @Security(name="Bearer")
      *
      */
-    public function list(ParamFetcherInterface $paramFetcher): Products
+    public function list(ParamFetcherInterface $paramFetcher, AdapterInterface $cache): Products
     {
         $pager = $this->getDoctrine()->getRepository(Product::class)->search(
             $paramFetcher->get('keyword'),
@@ -77,6 +78,13 @@ class ProductController extends AbstractController
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset')
         );
+
+        $item = $cache->getItem($pager);
+        if (!$item->isHit()) {
+            $item->set($pager);
+            $cache->save($item);
+        }
+        $pager = $item->get();
 
         return new Products($pager);
     }
