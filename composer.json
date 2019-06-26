@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^1.11",
         "doctrine/orm": "^2.6",
+        "friendsofsymfony/http-cache": "^2.7",
         "friendsofsymfony/rest-bundle": "^2.5",
         "gesdinet/jwt-refresh-token-bundle": "^0.6.2",
         "guzzlehttp/psr7": "^1.5",
