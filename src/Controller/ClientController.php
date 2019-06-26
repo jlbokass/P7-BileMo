@@ -72,6 +72,7 @@ class ClientController extends AbstractFOSRestController
      */
     public function list(ParamFetcherInterface $paramFetcher)
     {
+        $this->denyAccessUnlessGranted('view', $paramFetcher);
         $pager = $this->getDoctrine()->getRepository(Client::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
