@@ -79,7 +79,7 @@ class ProductController extends AbstractController
             $paramFetcher->get('offset')
         );
 
-        $item = $cache->getItem($pager);
+        $item = $cache->getItem('page');
         if (!$item->isHit()) {
             $item->set($pager);
             $cache->save($item);

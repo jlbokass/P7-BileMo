@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class ProductFixtures extends Fixture
 {
-    private  static $name = [
+    /*private  static $name = [
         'BileMo SG1',
         'BileMo II',
         'BileMo 4g+',
@@ -27,7 +27,7 @@ class ProductFixtures extends Fixture
       'red',
       'yellow',
       'dark'
-    ];
+    ];*/
 
     public function load(ObjectManager $manager)
     {
