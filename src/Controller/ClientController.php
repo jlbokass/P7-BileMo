@@ -10,10 +10,12 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View;
+use Http\Discovery\Exception\NotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -72,7 +74,6 @@ class ClientController extends AbstractFOSRestController
      */
     public function list(ParamFetcherInterface $paramFetcher)
     {
-        $this->denyAccessUnlessGranted('view', $paramFetcher);
         $pager = $this->getDoctrine()->getRepository(Client::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
@@ -171,9 +172,9 @@ class ClientController extends AbstractFOSRestController
             throw new ResourceValidationException($message);
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($client);
-        $em->flush();
+        $manager = $this->getDoctrine()->getManager();
+        $manager->persist($client);
+        $manager->flush();
 
         return $this->view(
             $client,
@@ -192,7 +193,7 @@ class ClientController extends AbstractFOSRestController
      * @param Client $client
      *
      *  @Rest\Patch(
-     *     path="/api/clients/{id}",
+     *     path="/api/client/{id}",
      *     name="app_client_update",
      *     requirements={"id"="\d+"}
      * )
@@ -222,14 +223,41 @@ class ClientController extends AbstractFOSRestController
      * @SWG\Tag(name="Clients")
      * @Security(name="Bearer")
      */
-    public function update(Client $client)
+    public function update($id, Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->flush();
+        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+
+        if (!$client) {
+            throw new NotFoundException('client not found');
+        }
+
+        $array = json_decode($request->getContent(), true);
+        // sette the user object dynamically
+        foreach ($array as $key => $value) {
+            $method = 'set'.$key;
+            if (preg_match('/_/', $key)) {
+                $arrayExp = explode('_', $key);
+                foreach ($arrayExp as $entry => $val) {
+                    $arrayExpUcF[$entry] = ucfirst($val);
+                }
+
+                $method = 'set' . implode($arrayExpUcF);
+            }
+            if (method_exists($client, $method)) {
+                $client->$method($array[$key]);
+            } else {
+                $view = View::create();
+                $view
+                    ->setResponse(Response::create($key. ' does not exist', 400))
+                    ->setStatusCode(400);
+
+                return $view;
+            }
+        }
 
         return $this->view(
             $client,
-            Response::HTTP_CREATED,
+            Response::HTTP_OK,
             ['Location' => $this->generateUrl(
                 'app_client_show',
                 [
@@ -245,7 +273,7 @@ class ClientController extends AbstractFOSRestController
      * @return Response
      *
      *  @Rest\Delete(
-     *     path="/api/clients/{id}",
+     *     path="/api/client/{id}",
      *     name="app_client_delete",
      *     requirements={"id"="\d+"}
      * )
@@ -268,9 +296,9 @@ class ClientController extends AbstractFOSRestController
      */
     public function delete(Client $client)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($client);
-        $em->flush();
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($client);
+        $manager->flush();
 
         return new Response('Deleted OK', Response::HTTP_OK);
     }
