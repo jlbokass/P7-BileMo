@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Client;
-use App\Entity\Product;
 use App\Exception\ResourceValidationException;
 use App\Representation\Clients;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -14,10 +13,8 @@ use Http\Discovery\Exception\NotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Swagger\Annotations as SWG;
@@ -57,7 +54,7 @@ class ClientController extends AbstractFOSRestController
      *
      * @SWG\Response(
      *     response=200,
-     *     description="Returns list of all users related to an authentified customers",
+     *     description="Returns list of all users related to an authentified user",
      *     @SWG\Schema(
      *     type="array",
      *     @SWG\Items(ref=@Model(type=Client::class))
@@ -74,7 +71,9 @@ class ClientController extends AbstractFOSRestController
      */
     public function list(ParamFetcherInterface $paramFetcher)
     {
+        $user = $this->getUser();
         $pager = $this->getDoctrine()->getRepository(Client::class)->search(
+            $user->getId(),
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
@@ -122,6 +121,7 @@ class ClientController extends AbstractFOSRestController
      */
     public function show(Client $client)
     {
+        $this->denyAccessUnlessGranted('SHOW', $client);
         return $client;
     }
 
@@ -173,6 +173,7 @@ class ClientController extends AbstractFOSRestController
         }
 
         $manager = $this->getDoctrine()->getManager();
+        $client->setUser($this->getUser());
         $manager->persist($client);
         $manager->flush();
 
@@ -193,7 +194,7 @@ class ClientController extends AbstractFOSRestController
      * @param Client $client
      *
      *  @Rest\Patch(
-     *     path="/api/client/{id}",
+     *     path="/api/clients/{id}",
      *     name="app_client_update",
      *     requirements={"id"="\d+"}
      * )
@@ -226,6 +227,8 @@ class ClientController extends AbstractFOSRestController
     public function update($id, Request $request)
     {
         $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+
+        $this->denyAccessUnlessGranted('EDIT', $client);
 
         if (!$client) {
             throw new NotFoundException('client not found');
@@ -273,7 +276,7 @@ class ClientController extends AbstractFOSRestController
      * @return Response
      *
      *  @Rest\Delete(
-     *     path="/api/client/{id}",
+     *     path="/api/clients/{id}",
      *     name="app_client_delete",
      *     requirements={"id"="\d+"}
      * )
@@ -296,6 +299,8 @@ class ClientController extends AbstractFOSRestController
      */
     public function delete(Client $client)
     {
+        $this->denyAccessUnlessGranted('DELETE', $client);
+
         $manager = $this->getDoctrine()->getManager();
         $manager->remove($client);
         $manager->flush();

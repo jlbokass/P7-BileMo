@@ -6,11 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  *
  * @UniqueEntity(fields={"email"}, message="This email already exists")
+ *
+ * @ExclusionPolicy("all")
  *
  *
  * @Hateoas\Relation(
@@ -40,6 +44,11 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     )
  * )
  *
+ * @Hateoas\Relation(
+ *     "user",
+ *     embedded = @Hateoas\Embedded("expr(object.getUser())")
+ * )
+ *
  */
 class Client
 {
@@ -47,6 +56,8 @@ class Client
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose
      */
     private $id;
 
@@ -60,6 +71,8 @@ class Client
      *     minMessage="The username must be at least {{ limit }} characters long",
      *     maxMessage="The username cannot be longer than {{ limit }} characters"
      * )
+     *
+     * @Serializer\Expose
      */
     private $username;
 
@@ -95,6 +108,13 @@ class Client
      *     message="Password needs at least one number")
      */
     private $password;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="clients")
+     *
+     *
+     */
+    private $user;
 
     public function getId(): ?int
     {
@@ -133,6 +153,18 @@ class Client
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

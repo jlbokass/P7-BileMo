@@ -66,12 +66,18 @@ class ProductController extends AbstractController
      *     type="string",
      *     description="Search for a model with a keyword"
      * )
-     * @SWG\Tag(name="Clients")
+     * @SWG\Tag(name="Products")
      * @Security(name="Bearer")
      *
      */
     public function list(ParamFetcherInterface $paramFetcher, AdapterInterface $cache): Products
     {
+
+        $item = $cache->getItem('page');
+        if ($item->isHit()) {
+            return $item->get();
+        }
+
         $pager = $this->getDoctrine()->getRepository(Product::class)->search(
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
@@ -79,12 +85,8 @@ class ProductController extends AbstractController
             $paramFetcher->get('offset')
         );
 
-        $item = $cache->getItem('page');
-        if (!$item->isHit()) {
-            $item->set($pager);
-            $cache->save($item);
-        }
-        $pager = $item->get();
+        $item->set($pager);
+        $cache->save($item);
 
         return new Products($pager);
     }
@@ -119,7 +121,7 @@ class ProductController extends AbstractController
      *     type="integer",
      *     description="id of the product"
      * )
-     * @SWG\Tag(name="Clients")
+     * @SWG\Tag(name="Products")
      * @Security(name="Bearer")
      */
     public function show(Product $product)
