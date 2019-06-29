@@ -2,11 +2,21 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ *
+ * @UniqueEntity(fields={"username"}, message="This username already exists")
+ *
+ * @ExclusionPolicy("all")
  */
 class User implements UserInterface
 {
@@ -18,20 +28,47 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=180)
+     *
+     * @Assert\NotBlank(message="Username cannot be blank")
+     * @Assert\Length(
+     *      min="6",
+     *     max="12",
+     *     minMessage="The username must be at least {{ limit }} characters long",
+     *     maxMessage="The username cannot be longer than {{ limit }} characters"
+     * )
+     *
+     * @Serializer\Expose
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+    private $roles;
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Client", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $clients;
+
+    public function __construct()
+    {
+        $this->isActive = true;
+        $this->roles = ['ROLE_USER'];
+        $this->clients = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +127,22 @@ class User implements UserInterface
     }
 
     /**
+     * @return mixed
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param mixed $isActive
+     */
+    public function setIsActive($isActive): void
+    {
+        $this->isActive = $isActive;
+    }
+
+    /**
      * @see UserInterface
      */
     public function getSalt()
@@ -104,5 +157,36 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|Client[]
+     */
+    public function getClients(): Collection
+    {
+        return $this->clients;
+    }
+
+    public function addClient(Client $client): self
+    {
+        if (!$this->clients->contains($client)) {
+            $this->clients[] = $client;
+            $client->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClient(Client $client): self
+    {
+        if ($this->clients->contains($client)) {
+            $this->clients->removeElement($client);
+            // set the owning side to null (unless already changed)
+            if ($client->getUser() === $this) {
+                $client->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

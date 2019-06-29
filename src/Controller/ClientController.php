@@ -54,7 +54,7 @@ class ClientController extends AbstractFOSRestController
      *
      * @SWG\Response(
      *     response=200,
-     *     description="Returns list of all users related to an authentified customers",
+     *     description="Returns list of all users related to an authentified user",
      *     @SWG\Schema(
      *     type="array",
      *     @SWG\Items(ref=@Model(type=Client::class))
@@ -71,7 +71,9 @@ class ClientController extends AbstractFOSRestController
      */
     public function list(ParamFetcherInterface $paramFetcher)
     {
+        $user = $this->getUser();
         $pager = $this->getDoctrine()->getRepository(Client::class)->search(
+            $user->getId(),
             $paramFetcher->get('keyword'),
             $paramFetcher->get('order'),
             $paramFetcher->get('limit'),
@@ -119,6 +121,7 @@ class ClientController extends AbstractFOSRestController
      */
     public function show(Client $client)
     {
+        $this->denyAccessUnlessGranted('SHOW', $client);
         return $client;
     }
 
@@ -170,7 +173,7 @@ class ClientController extends AbstractFOSRestController
         }
 
         $manager = $this->getDoctrine()->getManager();
-        $client->setCustomer($this->getUser());
+        $client->setUser($this->getUser());
         $manager->persist($client);
         $manager->flush();
 
@@ -224,6 +227,8 @@ class ClientController extends AbstractFOSRestController
     public function update($id, Request $request)
     {
         $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+
+        $this->denyAccessUnlessGranted('EDIT', $client);
 
         if (!$client) {
             throw new NotFoundException('client not found');
@@ -294,6 +299,8 @@ class ClientController extends AbstractFOSRestController
      */
     public function delete(Client $client)
     {
+        $this->denyAccessUnlessGranted('DELETE', $client);
+
         $manager = $this->getDoctrine()->getManager();
         $manager->remove($client);
         $manager->flush();

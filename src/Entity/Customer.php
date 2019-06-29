@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  *
- * * @UniqueEntity(fields={"username"}, message="This username already exists")
+ * @UniqueEntity(fields={"username"}, message="This username already exists")
  */
 class Customer implements UserInterface
 {
@@ -36,11 +36,6 @@ class Customer implements UserInterface
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Client", mappedBy="customer", orphanRemoval=true)
-     */
-    private $clients;
 
     public function __construct($username = null)
     {
@@ -107,24 +102,6 @@ class Customer implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
-    }
-
-    /**
-     * @return Collection|Client[]
-     */
-    public function getClients(): Collection
-    {
-        return $this->clients;
-    }
-
-    public function addClient(Client $client): self
-    {
-        if (!$this->clients->contains($client)) {
-            $this->clients[] = $client;
-            $client->setCustomer($this);
-        }
-
-        return $this;
     }
 
     public function removeClient(Client $client): self

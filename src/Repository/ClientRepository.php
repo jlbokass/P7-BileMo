@@ -48,21 +48,43 @@ class ClientRepository extends AbstractRepository
     }
     */
 
-    public function search($term, $order = 'asc', $limit = 10, $offset = 0)
+    public function search($clientId,$term, $order = 'asc', $limit = 10, $offset = 0)
     {
         $qb = $this
             ->createQueryBuilder('c')
-            ->select('c')
-            ->addOrderBy('c.username', $order)
+            ->addSelect('c')
+            ->where('c.user = :id')
+            ->setParameter('id', $clientId)
+            ->orderBy('c.username', $order)
         ;
 
         if ($term) {
             $qb
-                ->where('c.title LIKE ?1')
+                ->andWhere('c.username LIKE ?1')
                 ->setParameter(1, '%'.$term.'%')
             ;
         }
 
         return $this->paginate($qb, $limit, $offset);
+    }
+
+    public function search2($client_id, $term, $order = 'asc', $limit = 20)
+    {
+        $qb = $this
+            ->createQueryBuilder('u')
+            ->select('u')
+            ->Where('u.client = :id')
+            ->setParameter('id', $client_id)
+            ->orderBy('u.username', $order)
+
+        ;
+        if ($term) {
+            $qb
+                ->andWhere('u.username LIKE ?1')
+                ->setParameter(1, '%'.$term.'%')
+            ;
+        }
+
+        return $this->paginate($qb, $limit);
     }
 }

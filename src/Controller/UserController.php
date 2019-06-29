@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Customer;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +16,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class CustomerController
+ * Class UserController
  * @package App\Controller
  */
-class CustomerController extends AbstractController
+class UserController extends AbstractController
 {
     /**
      * @Route("/register", methods={"POST"})
@@ -33,7 +34,8 @@ class CustomerController extends AbstractController
         $username = $request->request->get('_username');
         $password = $request->request->get('_password');
 
-        $user = new Customer($username);
+        $user = new User();
+        $user->setUsername($username);
         $user->setPassword($encoder->encodePassword($user, $password));
         $manager->persist($user);
         $manager->flush();

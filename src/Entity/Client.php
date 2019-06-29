@@ -6,11 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  *
  * @UniqueEntity(fields={"email"}, message="This email already exists")
+ *
+ * @ExclusionPolicy("all")
  *
  *
  * @Hateoas\Relation(
@@ -40,6 +44,11 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *     )
  * )
  *
+ * @Hateoas\Relation(
+ *     "user",
+ *     embedded = @Hateoas\Embedded("expr(object.getUser())")
+ * )
+ *
  */
 class Client
 {
@@ -47,6 +56,8 @@ class Client
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose
      */
     private $id;
 
@@ -60,6 +71,8 @@ class Client
      *     minMessage="The username must be at least {{ limit }} characters long",
      *     maxMessage="The username cannot be longer than {{ limit }} characters"
      * )
+     *
+     * @Serializer\Expose
      */
     private $username;
 
@@ -97,10 +110,11 @@ class Client
     private $password;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="clients")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="clients")
+     *
+     *
      */
-    private $customer;
+    private $user;
 
     public function getId(): ?int
     {
@@ -143,14 +157,14 @@ class Client
         return $this;
     }
 
-    public function getCustomer(): ?Customer
+    public function getUser(): ?User
     {
-        return $this->customer;
+        return $this->user;
     }
 
-    public function setCustomer(?Customer $customer): self
+    public function setUser(?User $user): self
     {
-        $this->customer = $customer;
+        $this->user = $user;
 
         return $this;
     }

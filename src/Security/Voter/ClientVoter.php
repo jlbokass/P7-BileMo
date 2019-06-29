@@ -11,7 +11,7 @@ class ClientVoter extends Voter
 {
     protected function supports($attribute, $subject)
     {
-        return in_array($attribute, ['LIST','SHOW','EDIT', 'DELETE'])
+        return in_array($attribute, ['SHOW','EDIT', 'DELETE'])
             && $subject instanceof Client;
     }
 
@@ -25,20 +25,14 @@ class ClientVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
-            case 'LIST':
-                //
-                break;
             case 'SHOW':
-                // logic to determine if the user can VIEW
-                // return true or false
+                return $client->getuser()->getId() === $user->getId();
                 break;
             case 'EDIT':
-                // logic to determine if the user can VIEW
-                // return true or false
+                return $client->getuser()->getId() === $user->getId();
                 break;
             case 'DELETE':
-                // logic to determine if the user can VIEW
-                // return true or false
+                return $client->getuser()->getId() === $user->getId();
                 break;
         }
 

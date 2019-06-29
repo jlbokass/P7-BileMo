@@ -11,13 +11,13 @@ security:
         #in_memory: { memory: ~ }
         entity_provider:
             entity:
-                class: App\Entity\Customer
-                property: username
-        # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
-            entity:
                 class: App\Entity\User
                 property: username
+        # used to reload user from session & other features (e.g. switch_user)
+        #app_user_provider:
+            #entity:
+                #class: App\Entity\User
+                #property: username
 
     firewalls:
         dev:

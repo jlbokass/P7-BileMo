@@ -3,12 +3,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\Client;
-use App\Entity\Customer;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ClientFixtures extends BaseFixtures implements DependentFixtureInterface
 {
@@ -33,10 +30,10 @@ class ClientFixtures extends BaseFixtures implements DependentFixtureInterface
             $client->setPassword('123456');
             $client->setEmail($this->faker->unique()->email);
 
-            /** @var Customer[] $user */
-            $customer = $this->getRandomReferences(Customer::class, $this->faker->numberBetween(1, 2));
-            foreach ($customer as $customer) {
-                $client->setCustomer($customer);
+            /** @var User[] $user */
+            $user = $this->getRandomReferences(User::class, $this->faker->numberBetween(1, 2));
+            foreach ($user as $user) {
+                $client->setUser($user);
             }
         });
 
@@ -46,7 +43,7 @@ class ClientFixtures extends BaseFixtures implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            CustomerFixtures::class,
+            UserFixtures::class,
         ];
     }
 }
