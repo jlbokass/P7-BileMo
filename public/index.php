@@ -23,9 +23,6 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false
 
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 
-//$kernel = new AppCache($kernel);
-//Request::enableHttpMethodParameterOverride();
-
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

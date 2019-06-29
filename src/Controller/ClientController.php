@@ -72,6 +72,7 @@ class ClientController extends AbstractFOSRestController
     public function list(ParamFetcherInterface $paramFetcher)
     {
         $user = $this->getUser();
+
         $pager = $this->getDoctrine()->getRepository(Client::class)->search(
             $user->getId(),
             $paramFetcher->get('keyword'),
