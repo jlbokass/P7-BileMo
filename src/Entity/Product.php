@@ -5,9 +5,12 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\ExclusionPolicy;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
+ *
+ * @ExclusionPolicy("all")
  *
  * @Hateoas\Relation(
  *     "self",
@@ -32,6 +35,8 @@ class Product
      * @ORM\Column(type="string", length=100)
      *
      * @Serializer\Since("1.0")
+     *
+     * @Serializer\Expose
      */
     private $name;
 
@@ -39,6 +44,8 @@ class Product
      * @ORM\Column(type="string", length=100)
      *
      * @Serializer\Since("1.0")
+     *
+     * @Serializer\Expose
      */
     private $memory;
 
@@ -46,6 +53,8 @@ class Product
      * @ORM\Column(type="string", length=100)
      *
      * @Serializer\Since("1.0")
+     *
+     * @Serializer\Expose
      */
     private $color;
 
@@ -53,12 +62,17 @@ class Product
      * @ORM\Column(type="text")
      *
      * @Serializer\Since("1.0")
+     *
+     * @Serializer\Expose
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=100)
+     *
      * @Serializer\Since("2.0")
+     *
+     * @Serializer\Expose
      */
     private $weight;
 
