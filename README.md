@@ -1,5 +1,7 @@
 # Welcome to my API WEB SERVICE using Symfony 4.3
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d5c900a0b0ba435094f42fc9acc9bd40)](https://app.codacy.com/app/jlbokass/P7-BileMo?utm_source=github.com&utm_medium=referral&utm_content=jlbokass/P7-BileMo&utm_campaign=Badge_Grade_Dashboard)
+
 This API WEB SERVICE .
 
 This work is done as part of my PHP web developer training with Openclassroom - project 5.
