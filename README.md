@@ -4,7 +4,7 @@
 
 This API WEB SERVICE .
 
-This work is done as part of my PHP web developer training with Openclassroom - project 5.
+This work is done as part of my PHP web developer training with Openclassroom - project 7.
 
 ## Installation
 
