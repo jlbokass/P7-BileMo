@@ -44,8 +44,13 @@ security:
             pattern: ^/api/token/refresh
             stateless: true
             anonymous: true
+        api_doc:
+            pattern: ^/api/doc
+            security: false
         main:
             anonymous: true
+            logout:
+                path: app_logout
 
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }

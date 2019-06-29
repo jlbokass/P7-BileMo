@@ -8,8 +8,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Nelmio\ApiDocBundle\Annotation as Doc;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-class DefaultController extends AbstractController
+/**
+ * Class CustomerController
+ * @package App\Controller
+ */
+class CustomerController extends AbstractController
 {
     /**
      * @Route("/register", methods={"POST"})
@@ -23,15 +32,25 @@ class DefaultController extends AbstractController
         $manager = $this->getDoctrine()->getManager();
         $username = $request->request->get('_username');
         $password = $request->request->get('_password');
+
         $user = new Customer($username);
         $user->setPassword($encoder->encodePassword($user, $password));
         $manager->persist($user);
         $manager->flush();
+
         return new Response(sprintf('User %s successfully created', $user->getUsername()));
     }
 
     public function api()
     {
         return new Response(sprintf('Logged in as %s', $this->getUser()->getUsername()));
+    }
+
+    /**
+     * @Route("/logout", name="app_logout", methods={"GET"})
+     */
+    public function logout()
+    {
+
     }
 }

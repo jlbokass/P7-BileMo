@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Client;
-use App\Entity\Product;
 use App\Exception\ResourceValidationException;
 use App\Representation\Clients;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -14,10 +13,8 @@ use Http\Discovery\Exception\NotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Swagger\Annotations as SWG;
@@ -193,7 +190,7 @@ class ClientController extends AbstractFOSRestController
      * @param Client $client
      *
      *  @Rest\Patch(
-     *     path="/api/client/{id}",
+     *     path="/api/clients/{id}",
      *     name="app_client_update",
      *     requirements={"id"="\d+"}
      * )
@@ -273,7 +270,7 @@ class ClientController extends AbstractFOSRestController
      * @return Response
      *
      *  @Rest\Delete(
-     *     path="/api/client/{id}",
+     *     path="/api/clients/{id}",
      *     name="app_client_delete",
      *     requirements={"id"="\d+"}
      * )
