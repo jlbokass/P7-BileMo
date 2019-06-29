@@ -170,6 +170,7 @@ class ClientController extends AbstractFOSRestController
         }
 
         $manager = $this->getDoctrine()->getManager();
+        $client->setCustomer($this->getUser());
         $manager->persist($client);
         $manager->flush();
 

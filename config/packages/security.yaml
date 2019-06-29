@@ -3,12 +3,20 @@ security:
     encoders:
         App\Entity\Customer:
             algorithm: bcrypt
+        App\Entity\User:
+            algorithm: argon2i
+
 
     providers:
         #in_memory: { memory: ~ }
         entity_provider:
             entity:
                 class: App\Entity\Customer
+                property: username
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
                 property: username
 
     firewalls:
