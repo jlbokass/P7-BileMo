@@ -3,12 +3,11 @@
 namespace App\DataFixtures;
 
 use App\Entity\Product;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class ProductFixtures extends Fixture
+class ProductFixtures extends BaseFixtures
 {
-    /*private  static $name = [
+    private  static $name = [
         'BileMo SG1',
         'BileMo II',
         'BileMo 4g+',
@@ -27,20 +26,25 @@ class ProductFixtures extends Fixture
       'red',
       'yellow',
       'dark'
-    ];*/
+    ];
 
-    public function load(ObjectManager $manager)
+    private static $weight = [
+        '0.1 Kg',
+        '0.2 Kg',
+        '0.3 Kg',
+    ];
+
+    public function loadData(ObjectManager $manager)
     {
-        for ($i = 0; $i <20; $i++) {
-            $product = new Product();
-            $product->setName('BileMo');
-            $product->setMemory('1'.$i.'Go');
-            $product->setColor('color'.$i);
-            $product->setDescription('description'.$i);
-            $product->setWeight('20'.$i. 'gramme');
-
-            $manager->persist($product);
-        }
+        $this->createMany(Product::class, 20, function(Product $product){
+           $product->
+           setName($this->faker->randomElement(self::$name))
+           ->setDescription($this->faker->paragraph(10))
+           ->setColor($this->faker->randomElement(self::$color))
+           ->setMemory($this->faker->randomElement(self::$memory))
+           ->setWeight($this->faker->randomElement(self::$weight))
+           ;
+        });
 
         $manager->flush();
     }

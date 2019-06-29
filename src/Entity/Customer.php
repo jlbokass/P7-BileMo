@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -35,10 +37,16 @@ class Customer implements UserInterface
      */
     private $isActive;
 
-    public function __construct($username)
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Client", mappedBy="customer", orphanRemoval=true)
+     */
+    private $clients;
+
+    public function __construct($username = null)
     {
         $this->isActive = true;
         $this->username = $username;
+        $this->clients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,6 +107,37 @@ class Customer implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection|Client[]
+     */
+    public function getClients(): Collection
+    {
+        return $this->clients;
+    }
+
+    public function addClient(Client $client): self
+    {
+        if (!$this->clients->contains($client)) {
+            $this->clients[] = $client;
+            $client->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClient(Client $client): self
+    {
+        if ($this->clients->contains($client)) {
+            $this->clients->removeElement($client);
+            // set the owning side to null (unless already changed)
+            if ($client->getCustomer() === $this) {
+                $client->setCustomer(null);
+            }
+        }
+
+        return $this;
     }
 
 
