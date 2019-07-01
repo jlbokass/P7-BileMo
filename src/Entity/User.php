@@ -71,6 +71,8 @@ class User implements UserInterface
         $this->isActive = true;
         $this->roles = ['ROLE_USER'];
         $this->clients = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     public function getId(): ?int
