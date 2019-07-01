@@ -43,6 +43,8 @@ class ProductFixtures extends BaseFixtures
            ->setColor($this->faker->randomElement(self::$color))
            ->setMemory($this->faker->randomElement(self::$memory))
            ->setWeight($this->faker->randomElement(self::$weight))
+               ->setCreatedAt($this->faker->dateTime)
+               ->setUpdatedAt($this->faker->dateTime)
            ;
         });
 

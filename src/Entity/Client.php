@@ -13,6 +13,7 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  *
  * @UniqueEntity(fields={"email"}, message="This email already exists")
+ * @UniqueEntity(fields={"username"}, message="This username already exists")
  *
  * @ExclusionPolicy("all")
  *
@@ -83,6 +84,8 @@ class Client
      * @Assert\Email(
      *     message="The email '{{ value }}' is not a valid email"
      * )
+     *
+     * @Serializer\Expose
      */
     private $email;
 
@@ -106,15 +109,31 @@ class Client
      * @Assert\Regex(pattern="*\d+.*",
      *     match=true,
      *     message="Password needs at least one number")
+     *
+     * @Serializer\Expose
      */
     private $password;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="clients")
-     *
-     *
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -165,6 +184,30 @@ class Client
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

@@ -25,6 +25,8 @@ class UserFixtures extends BaseFixtures
 
             $user->setUsername($this->faker->unique()->randomElement(self::$username));
             $user->setPassword($this->encoder->encodePassword($user, 'test123'));
+            $user->setCreatedAt($this->faker->dateTime);
+            $user->setUpdatedAt($this->faker->dateTime);
 
         });
 

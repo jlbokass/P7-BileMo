@@ -13,6 +13,7 @@ use Http\Discovery\Exception\NotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -54,7 +55,7 @@ class ClientController extends AbstractFOSRestController
      *
      * @SWG\Response(
      *     response=200,
-     *     description="Returns list of all users related to an authentified user",
+     *     description="Returns list of all client related to an authentified user",
      *     @SWG\Schema(
      *     type="array",
      *     @SWG\Items(ref=@Model(type=Client::class))
@@ -66,10 +67,19 @@ class ClientController extends AbstractFOSRestController
      *     type="string",
      *     description="Search for a username with a keyword"
      * )
+     *
+     * @SWG\Parameter(
+     *          name="Authorization",
+     *          required=true,
+     *          in="header",
+     *          type="string",
+     *          description="Bearer Token"
+     *     )
+     *
      * @SWG\Tag(name="Clients")
      * @Security(name="Bearer")
      */
-    public function list(ParamFetcherInterface $paramFetcher)
+    public function list(ParamFetcherInterface $paramFetcher, AdapterInterface $cache)
     {
         $user = $this->getUser();
 
@@ -80,6 +90,15 @@ class ClientController extends AbstractFOSRestController
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset')
         );
+
+        $item = $cache->getItem('page');
+        if (!$item->isHit()) {
+            $item->expiresAfter(10800);
+            $item->set($pager);
+            $cache->save($item);
+        }
+
+        $pager = $item->get();
 
         return new Clients($pager);
     }
@@ -117,11 +136,23 @@ class ClientController extends AbstractFOSRestController
      *     type="integer",
      *     description="id of the client"
      * )
+     *
+     * @SWG\Parameter(
+     *          name="Authorization",
+     *          required=true,
+     *          in="header",
+     *          type="string",
+     *          description="Bearer Token"
+     *     )
+     *
      * @SWG\Tag(name="Clients")
      * @Security(name="Bearer")
      */
     public function show(Client $client)
     {
+        if (!$client) {
+            throw new NotFoundException('Not found');
+        }
         $this->denyAccessUnlessGranted('SHOW', $client);
         return $client;
     }
@@ -130,13 +161,12 @@ class ClientController extends AbstractFOSRestController
      * @param Client $client
      * @param ConstraintViolationList $violations
      *
-     * @throws
-     *
      * @Rest\Post(
      *     path="/api/clients",
      *     name="app_client_create"
      * )
      * @Rest\View(statusCode=201)
+     *
      * @ParamConverter(
      *     "client",
      *     converter="fos_rest.request_body")
@@ -155,7 +185,24 @@ class ClientController extends AbstractFOSRestController
      *     description="Return when a violation is raised by validation"
      * )
      *
-     * )
+     * @SWG\Parameter(
+     *          name="Authorization",
+     *          required=true,
+     *          in="header",
+     *          type="string",
+     *          description="Bearer Token"
+     *     )
+     *
+     * @SWG\Parameter(
+     *          name="Body",
+     *          required=true,
+     *          in="body",
+     *          type="string",
+     *          @SWG\Schema(
+     *              type="array",
+     *              @SWG\Items(ref=@Model(type=Client::class))
+     *          ))
+     *
      * @SWG\Tag(name="Clients")
      * @Security(name="Bearer")
      */
@@ -202,7 +249,7 @@ class ClientController extends AbstractFOSRestController
      *
      * @SWG\Response(
      *     response=200,
-     *     description="Returns client details",
+     *     description="Returns client details when successful updated",
      *     @SWG\Schema(
      *     type="array",
      *     @SWG\Items(ref=@Model(type=Client::class))
@@ -222,6 +269,15 @@ class ClientController extends AbstractFOSRestController
      *     type="integer",
      *     description="id of the client"
      * )
+     *
+     * @SWG\Parameter(
+     *          name="Authorization",
+     *          required=true,
+     *          in="header",
+     *          type="string",
+     *          description="Bearer Token"
+     *     )
+     *
      * @SWG\Tag(name="Clients")
      * @Security(name="Bearer")
      */
@@ -294,6 +350,14 @@ class ClientController extends AbstractFOSRestController
      *     response=404,
      *     description="return when resource is not found"
      * )
+     *
+     * @SWG\Parameter(
+     *          name="Authorization",
+     *          required=true,
+     *          in="header",
+     *          type="string",
+     *          description="Bearer Token"
+     *     )
      *
      * @SWG\Tag(name="Clients")
      * @Security(name="Bearer")

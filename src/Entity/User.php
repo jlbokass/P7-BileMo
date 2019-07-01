@@ -28,7 +28,7 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180)
+     * @ORM\Column(type="string", length=180, unique=true)
      *
      * @Assert\NotBlank(message="Username cannot be blank")
      * @Assert\Length(
@@ -59,6 +59,16 @@ class User implements UserInterface
     private $isActive;
 
     /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Client", mappedBy="user", cascade={"persist", "remove"})
      */
     private $clients;
@@ -68,6 +78,8 @@ class User implements UserInterface
         $this->isActive = true;
         $this->roles = ['ROLE_USER'];
         $this->clients = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -186,6 +198,30 @@ class User implements UserInterface
                 $client->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
