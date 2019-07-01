@@ -53,7 +53,7 @@ security:
             stateless: true
             anonymous: true
         api_doc:
-            pattern: ^/api/doc
+            pattern: ^api/doc
             security: false
         main:
             anonymous: true

@@ -13,6 +13,7 @@ use Http\Discovery\Exception\NotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -69,7 +70,7 @@ class ClientController extends AbstractFOSRestController
      * @SWG\Tag(name="Clients")
      * @Security(name="Bearer")
      */
-    public function list(ParamFetcherInterface $paramFetcher)
+    public function list(ParamFetcherInterface $paramFetcher, AdapterInterface $cache)
     {
         $user = $this->getUser();
 
@@ -80,6 +81,15 @@ class ClientController extends AbstractFOSRestController
             $paramFetcher->get('limit'),
             $paramFetcher->get('offset')
         );
+
+        $item = $cache->getItem('page');
+        if (!$item->isHit()) {
+            $item->expiresAfter('10800');
+            $item->set($pager);
+            $cache->save($item);
+        }
+
+        $pager = $item->get();
 
         return new Clients($pager);
     }

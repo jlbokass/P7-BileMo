@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation as Serializer;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
@@ -52,6 +53,8 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class Client
 {
+    use TimestampableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

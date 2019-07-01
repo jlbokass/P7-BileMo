@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class UserController
  * @package App\Controller
+ * @Route("/api/user")
  */
 class UserController extends AbstractController
 {

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\ExclusionPolicy;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
@@ -24,6 +25,8 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
  */
 class Product
 {
+    use TimestampableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

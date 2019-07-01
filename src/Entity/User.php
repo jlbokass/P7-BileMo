@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation as Serializer;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -20,6 +21,8 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class User implements UserInterface
 {
+    use TimestampableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
