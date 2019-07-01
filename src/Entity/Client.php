@@ -8,10 +8,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation as Serializer;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  *
  * @UniqueEntity(fields={"email"}, message="This email already exists")
+ * @UniqueEntity(fields={"username"}, message="This username already exists")
  *
  * @ExclusionPolicy("all")
  *
@@ -82,6 +84,8 @@ class Client
      * @Assert\Email(
      *     message="The email '{{ value }}' is not a valid email"
      * )
+     *
+     * @Serializer\Expose
      */
     private $email;
 
@@ -105,23 +109,23 @@ class Client
      * @Assert\Regex(pattern="*\d+.*",
      *     match=true,
      *     message="Password needs at least one number")
+     *
+     * @Serializer\Expose
      */
     private $password;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="clients")
-     *
-     *
      */
     private $user;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
 

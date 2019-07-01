@@ -18,7 +18,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class UserController
  * @package App\Controller
- * @Route("/api/user")
  */
 class UserController extends AbstractController
 {
@@ -32,8 +31,8 @@ class UserController extends AbstractController
     public function register(Request $request, UserPasswordEncoderInterface $encoder)
     {
         $manager = $this->getDoctrine()->getManager();
-        $username = $request->request->get('_username');
-        $password = $request->request->get('_password');
+        $username = $request->request->get('username');
+        $password = $request->request->get('password');
 
         $user = new User();
         $user->setUsername($username);

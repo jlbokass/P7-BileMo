@@ -29,6 +29,8 @@ class ClientFixtures extends BaseFixtures implements DependentFixtureInterface
             $client->setUsername($this->faker->unique()->randomElement(self::$username));
             $client->setPassword('123456');
             $client->setEmail($this->faker->unique()->email);
+            $client->setCreatedAt($this->faker->dateTime);
+            $client->setUpdatedAt($this->faker->dateTime);
 
             /** @var User[] $user */
             $user = $this->getRandomReferences(User::class, $this->faker->numberBetween(1, 2));

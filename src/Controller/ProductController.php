@@ -19,8 +19,9 @@ class ProductController extends AbstractController
 {
     /**
      * @param ParamFetcherInterface $paramFetcher
-     *
+     * @param AdapterInterface $cache
      * @return Products
+     * @throws \Psr\Cache\InvalidArgumentException
      *
      * @Rest\Get("/api/products", name="app_product_list")
      * @Rest\QueryParam(
@@ -67,9 +68,17 @@ class ProductController extends AbstractController
      *     type="string",
      *     description="Search for a model with a keyword"
      * )
+     *
+     * @SWG\Parameter(
+     *          name="Authorization",
+     *          required=true,
+     *          in="header",
+     *          type="string",
+     *          description="Bearer Token"
+     *     )
+     *
      * @SWG\Tag(name="Products")
      * @Security(name="Bearer")
-     *
      */
     public function list(ParamFetcherInterface $paramFetcher, AdapterInterface $cache): Products
     {
@@ -80,13 +89,13 @@ class ProductController extends AbstractController
             $paramFetcher->get('offset')
         );
 
-        /*$item = $cache->getItem('page');
+        $item = $cache->getItem('page');
         if (!$item->isHit()) {
             $item->set($pager);
             $cache->save($item);
         }
 
-        $pager = $item->get();*/
+        $pager = $item->get();
 
         return new Products($pager);
     }
@@ -121,6 +130,15 @@ class ProductController extends AbstractController
      *     type="integer",
      *     description="id of the product"
      * )
+     *
+     * @SWG\Parameter(
+     *          name="Authorization",
+     *          required=true,
+     *          in="header",
+     *          type="string",
+     *          description="Bearer Token"
+     *     )
+     *
      * @SWG\Tag(name="Products")
      * @Security(name="Bearer")
      */
